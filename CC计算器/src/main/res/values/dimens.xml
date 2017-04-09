@@ -1,0 +1,20 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
+
+    <!--cls和del文本大小-->
+    <dimen name="btnClsAndDel_dimen">25sp</dimen>
+    <!--超过25sp可能出现显示不完全问题-->
+
+    <!--单选按钮文本大小-->
+    <dimen name="radioText_dimen">20sp</dimen>
+    <!--等于=符号-->
+    <dimen name="btnEqual">40sp</dimen>
+    <!--更多功能按键也可以单独设置-->
+    <dimen name="btnFunction_dimen">30sp</dimen>
+    <!--大部分按钮-->
+    <dimen name="btnMass">32sp</dimen>
+
+    
+</resources>

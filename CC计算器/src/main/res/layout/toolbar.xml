@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:background="@android:color/holo_red_light"
+    app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    android:elevation="5dp">
+        <!--之所以像下面这么做是为了增加点击敏感度-->
+        <LinearLayout
+            android:id="@+id/openRecorder2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="end">
+                <ImageView
+                    android:id="@+id/openRecorder1"
+                    android:layout_gravity="center"
+                    android:background="@drawable/recorder"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="打开历史记录" />
+        </LinearLayout>
+</android.support.v7.widget.Toolbar>

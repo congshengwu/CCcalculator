@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+        <ListView
+            android:id="@+id/recorderListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarDefaultDelayBeforeFade="@android:integer/config_longAnimTime">
+        </ListView>
+        <TextView
+            android:visibility="visible"
+            android:id="@+id/textView_null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="计算记录空"
+            android:textSize="50sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/textView_formulaNumber"
+            android:layout_gravity="end"
+            android:text="0/30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <!--android:fadeScrollbars="false" 内容过长时滚动条始终显示-->
+    </FrameLayout>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal">
+        <Button
+            android:background="@drawable/set_color_red"
+            android:text="清空"
+            android:id="@+id/btn_cls2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:background="@drawable/set_color_red"
+            android:text="求和"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_equal2"
+            android:layout_weight="1"/>
+
+        <Button
+            android:background="@drawable/set_color_red"
+            android:text="返回"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_back"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>

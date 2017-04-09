@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="360dp"
+    android:background="@android:color/white">
+    <Button
+        android:background="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_yellow"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_yellow"
+        android:text="黄橙橙"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_violet"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_violet"
+        android:text="紫莹莹"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_pink"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_pink"
+        android:text="粉嘟嘟"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_blue"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_blue"
+        android:text="蓝湛湛"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_green"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_green"
+        android:text="绿油油"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+    <Button
+        android:onClick="setColor"
+        android:id="@+id/btn_color_red"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/set_color_red"
+        android:text="红彤彤"
+        android:layout_width="110dp"
+        android:layout_height="40dp" />
+    <Button
+        android:onClick="setColor"
+        android:layout_marginLeft="10dp"
+        android:textSize="15sp"
+        android:id="@+id/btn_color_now"
+        android:background="@drawable/set_color_red"
+        android:text="当前主题颜色"
+        android:layout_width="110dp"
+        android:layout_height="41dp" />
+
+</FrameLayout>

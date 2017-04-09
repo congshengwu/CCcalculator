@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">CC计算器</string>
+    <string name="radio2_name">二进制</string>
+    <string name="radio8_name">八进制</string>
+    <string name="radio10_name">十进制</string>
+    <string name="radio16_name">十六进制</string>
+    <string name="cls_name">清空</string>
+    <string name="del_name">删除</string>
+    
+    <string name="percent_name">%</string>
+
+    <string name="plus_name">+</string>
+    <string name="minus_name">-</string>
+    <string name="multiply_name">×</string>
+    <string name="divide_name">÷</string>
+
+    <string name="dot_name">.</string>
+    <string name="btnLeft_name">(</string>
+    <string name="btnRight_name">)</string>
+
+    <string name="equal_name">=</string>
+
+    <string name="btn0_name">0</string>
+    <string name="btn1_name">1</string>
+    <string name="btn2_name">2</string>
+    <string name="btn3_name">3</string>
+    <string name="btn4_name">4</string>
+    <string name="btn5_name">5</string>
+    <string name="btn6_name">6</string>
+    <string name="btn7_name">7</string>
+    <string name="btn8_name">8</string>
+    <string name="btn9_name">9</string>
+
+    <string name="gen_name">√</string>
+    <!--<string name="x2_name">x²</string>-->
+    <!--<string name="x3_name">x³</string>-->
+    <string name="xn_name">xⁿ</string>
+    
+    <string name="tan_name">tan</string>
+    <string name="sin_name">sin</string>
+    <string name="cos_name">cos</string>
+
+    <string name="e_name">e</string>
+    <string name="lg_name">lg</string>
+    <string name="ln_name">ln</string>
+    <string name="factorial_name">n!</string>
+
+    <string name="open">open</string>
+    <string name="close">close</string>
+</resources>
