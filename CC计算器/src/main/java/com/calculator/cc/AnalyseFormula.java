@@ -5,9 +5,6 @@ package com.calculator.cc;
  */
 
 class AnalyseFormula {
-
-
-
     //传入字符串公式进行分析计算
     double calculateFormula(String str){
         char[] chars = str.toCharArray();
@@ -635,5 +632,4 @@ class AnalyseFormula {
         result = opnd[0];
         return result;
     }
-
 }

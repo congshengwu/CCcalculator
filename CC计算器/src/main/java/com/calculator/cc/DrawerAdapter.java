@@ -129,10 +129,10 @@ class DrawerAdapter extends BaseAdapter {
     public int getViewTypeCount() {
         return drawerList.size();
     }
-    private class ViewHolder1{
+    private static class ViewHolder1{
         private TextView textView_drawer1;
     }
-    private class ViewHolder2{
+    private static class ViewHolder2{
         private TextView textView_drawer2;
         private SwitchCompat switchCompat;
     }

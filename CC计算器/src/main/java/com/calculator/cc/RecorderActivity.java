@@ -19,11 +19,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.githang.statusbar.StatusBarCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE_MODAL;
 
 /**
  * Created by cong on 20170121.
@@ -59,11 +62,11 @@ public class RecorderActivity extends Activity {
 
     private TextView textView_formulaNumber;
     private  boolean isNeedUpdate;//默认不需要更新,点击删除和清空后值为true
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder);
-
         //设置标题栏颜色
         StatusBarCompat.setStatusBarColor(RecorderActivity.this, Color.parseColor(MainActivity.appColor), true);
 
@@ -139,6 +142,13 @@ public class RecorderActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showPopupMenu(view,position);
+            }
+        });
+        recorderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                return true;
             }
         });
 
@@ -327,13 +337,6 @@ public class RecorderActivity extends Activity {
                 return false;
             }
         });
-        // PopupMenu关闭事件
-//        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-//            @Override
-//            public void onDismiss(PopupMenu menu) {
-//                //Toast.makeText(getApplicationContext(), "关闭PopupMenu", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         popupMenu.show();
     }

@@ -3,7 +3,6 @@ package com.calculator.cc;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -29,9 +28,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.githang.statusbar.StatusBarCompat;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,11 +37,11 @@ import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-//TODO 1.更改图标设计     2.recorder三个按钮修改样式和添加声音     3.设计彩蛋
 //TODO 历史记录加入长按功能,指定删除和指定求和
 /**
  * Created by 丛 on 2017/1/17
  */
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     //region 变量声明
@@ -219,9 +216,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //endregion
 
-    // 加载系统默认设置，字体不随用户设置变化
-
-
     //region onCreate()方法,设置按钮监听,调用处理侧滑菜单DrawerFunction()方法
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,13 +331,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //endregion
 
-
     @Override
     protected void onStart() {
         super.onStart();
-
         //放在这里是为了加快启动速度
-
         //region 设置控件们的监听事件
         textView1.addTextChangedListener(textWatcher);
         textView2.addTextChangedListener(textWatcher);

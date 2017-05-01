@@ -1,12 +1,13 @@
 package com.calculator.cc;
 
-import android.support.v7.widget.SwitchCompat;
-
 /**
  * Created by cong on 20170324.
  */
-//Drawer
+
 class DrawerItemBean {
+
+    private String DrawerItemText;
+
     String getDrawerItemText() {
         return DrawerItemText;
     }
@@ -14,9 +15,6 @@ class DrawerItemBean {
     void setDrawerItemText(String drawerItemText) {
         DrawerItemText = drawerItemText;
     }
-
-    private String DrawerItemText;
-
 
 
 }
