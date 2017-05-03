@@ -1,9 +1,8 @@
-package com.calculator.cc;
+package com.calculator.cc.activity;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -16,12 +15,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -30,13 +31,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.calculator.cc.application.App;
+import com.calculator.cc.util.CalculatorUtil;
+import com.calculator.cc.MySharedPreferences;
+import com.calculator.cc.R;
+import com.calculator.cc.adapter.DrawerAdapter;
+import com.calculator.cc.bean.DrawerItemBean;
+import com.calculator.cc.util.RecorderUtil;
 import com.githang.statusbar.StatusBarCompat;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +51,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     //region 变量声明
-    private AnalyseFormula cc;
     private TextView textView1;
     private TextView textView2;
     private RadioGroup radiog1;
@@ -113,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView egg;
 
-
     private final int resultCode_justCopyResult = 2;
     private final int resultCode_justCopyFormula = 3;
     private final int resultCode_justCalResult = 4;
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void findIdFunction() {
         textView1 = (TextView) findViewById(R.id.textView1);
         textView2 = (TextView) findViewById(R.id.textView2);
-
         radiog1 = (RadioGroup) findViewById(R.id.radiog1);
         radiog2 = (RadioGroup) findViewById(R.id.radiog2);
         radio2 = (RadioButton) findViewById(R.id.radio2);
@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_color_pink = (Button) findViewById(R.id.btn_color_pink);
         btn_color_violet = (Button) findViewById(R.id.btn_color_violet);
         btn_color_yellow = (Button) findViewById(R.id.btn_color_yellow);
+
         btnColorList = new ArrayList<>();
         btnColorList.add(btn_color_red);
         btnColorList.add(btn_color_green);
@@ -219,20 +220,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //endregion
 
-    // 加载系统默认设置，字体不随用户设置变化
-
-
-    //region onCreate()方法,设置按钮监听,调用处理侧滑菜单DrawerFunction()方法
     @Override
+    //region onCreate()方法,设置按钮监听,调用处理侧滑菜单DrawerFunction()方法
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        //初始化默认字体大小,不跟随系统
         initFontScale();
         setContentView(R.layout.activity_main);
-
-        //new一个计算公式分许对象
-        cc = new AnalyseFormula();
-
         //调用实例化各控件方法
         findIdFunction();
 
@@ -314,26 +309,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
         };
         drawerToggle.syncState();
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
         //endregion
 
         //region实例化历史记录类,并加载历史记录
-        recorderListData = new ArrayList<>();
-        try {
-            File file = new File(getFilesDir(), "recorderListData.txt");
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            recorderListData = (ArrayList<String>) objectInputStream.readObject();
-
-            fileInputStream.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        recorderListData = RecorderUtil.getRecorderListData();
         //endregion
-
-
+        if (!App.textView1_temp.equals("")){
+            textView1.setText(App.textView1_temp);
+        }
+        if (!App.textView2_temp.equals("")){
+            textView2.setText(App.textView2_temp);
+        }
+        resizeUi();
     }
     //endregion
 
@@ -341,9 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-
         //放在这里是为了加快启动速度
-
         //region 设置控件们的监听事件
         textView1.addTextChangedListener(textWatcher);
         textView2.addTextChangedListener(textWatcher);
@@ -381,7 +367,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
-                intent.putStringArrayListExtra("recorderListData",recorderListData);
+                //Collections.reverse(recorderListData);//逆序传过去
+                //intent.putStringArrayListExtra("recorderListData",recorderListData);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
@@ -391,7 +378,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
-                intent.putStringArrayListExtra("recorderListData",recorderListData);
+                //Collections.reverse(recorderListData);//逆序传过去
+                //intent.putStringArrayListExtra("recorderListData",recorderListData);
                 startActivityForResult(intent,1);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
@@ -407,6 +395,108 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         drawerListView();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Activity可能因为大小发生改变而销毁(非退出),因此将两个textView用户输入的内容临时保存,
+        //  再次onCreate()创建Activity时,再显示出来
+        String textView1_temp = textView1.getText().toString();
+        String textView2_temp = textView2.getText().toString();
+        if (!textView1_temp.equals("")){
+            App.textView1_temp = textView1_temp;
+        }
+        if (!textView2_temp.equals("")){
+            App.textView2_temp = textView2_temp;
+        }
+    }
+
+    private void resizeUi(){
+        btn_equal.post(new Runnable() {
+            @Override
+            public void run() {
+                //第一次运行获取"="按钮高度
+                if (App.isFirstStartApp){
+                    App.btn_equal_NormalHeight = btn_equal.getHeight();
+                    App.isFirstStartApp = false;
+                }else {
+                    if (btn_equal.getHeight() == App.btn_equal_NormalHeight){
+                        textView1.setTextSize(60);
+                        textView2.setTextSize(60);
+
+                        btn_l.setTextSize(32);
+                        btn_r.setTextSize(32);
+                        btn_cls.setTextSize(25);
+                        btn_del.setTextSize(25);
+                        btn_0.setTextSize(32);
+                        btn_1.setTextSize(32);
+                        btn_2.setTextSize(32);
+                        btn_3.setTextSize(32);
+                        btn_4.setTextSize(32);
+                        btn_5.setTextSize(32);
+                        btn_6.setTextSize(32);
+                        btn_7.setTextSize(32);
+                        btn_8.setTextSize(32);
+                        btn_9.setTextSize(32);
+                        btn_plus.setTextSize(32);
+                        btn_minus.setTextSize(32);
+                        btn_multiply.setTextSize(32);
+                        btn_divide.setTextSize(32);
+                        btn_percent.setTextSize(32);
+                        btn_dot.setTextSize(32);
+                        btn_equal.setTextSize(40);
+
+                        btn_pi.setTextSize(30);
+                        btn_e.setTextSize(30);
+                        btn_tan.setTextSize(30);
+                        btn_sin.setTextSize(30);
+                        btn_cos.setTextSize(30);
+                        btn_lg.setTextSize(30);
+                        btn_ln.setTextSize(30);
+                        btn_factorial.setTextSize(30);
+                        btn_gen.setTextSize(30);
+                        btn_xn.setTextSize(30);
+                    }else {
+                        textView1.setTextSize(25);
+                        textView2.setTextSize(25);
+
+                        btn_l.setTextSize(20);
+                        btn_r.setTextSize(20);
+                        btn_cls.setTextSize(18);
+                        btn_del.setTextSize(18);
+                        btn_0.setTextSize(20);
+                        btn_1.setTextSize(20);
+                        btn_2.setTextSize(20);
+                        btn_3.setTextSize(20);
+                        btn_4.setTextSize(20);
+                        btn_5.setTextSize(20);
+                        btn_6.setTextSize(20);
+                        btn_7.setTextSize(20);
+                        btn_8.setTextSize(20);
+                        btn_9.setTextSize(20);
+                        btn_plus.setTextSize(20);
+                        btn_minus.setTextSize(20);
+                        btn_multiply.setTextSize(20);
+                        btn_divide.setTextSize(20);
+                        btn_percent.setTextSize(20);
+                        btn_dot.setTextSize(20);
+                        btn_equal.setTextSize(25);
+                        btn_pi.setTextSize(18);
+
+                        btn_e.setTextSize(18);
+                        btn_tan.setTextSize(18);
+                        btn_sin.setTextSize(18);
+                        btn_cos.setTextSize(18);
+                        btn_lg.setTextSize(18);
+                        btn_ln.setTextSize(18);
+                        btn_factorial.setTextSize(18);
+                        btn_gen.setTextSize(18);
+                        btn_xn.setTextSize(18);
+                    }
+                }
+            }
+        });
     }
 
     //region 侧滑菜单的listView
@@ -512,9 +602,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     //endregion
-
-    //region按钮们的响应事件函数onClick()
+    
     @Override
+    //region按钮们的响应事件函数onClick()
     public void onClick(View v) {
         //region按钮0~9
         if (v.getId() == R.id.btn_0) {
@@ -1018,7 +1108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 inputNumber = "";
 
                 //↓↓↓↓↓↓↓↓↓↓↓↓↓↓核心计算部分↓↓↓↓↓↓↓↓↓↓↓↓↓
-                double x1 = cc.calculateFormula(temp);
+                double x1 = CalculatorUtil.calculate(temp);
                 //↑↑↑↑↑↑↑↑↑↑↑↑↑↑核心计算部分↑↑↑↑↑↑↑↑↑↑↑↑↑
 
                 //保留小数点后10位,将double转换为bg并保留10位小数
@@ -1030,6 +1120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //如果textView1为空,上面有个if语句会阻止程序往下进行,所以不用管文本框为空的情况
                     String strRecorder=showAt1+"=0";
                     recorderListData.add(strRecorder);
+                    RecorderUtil.saveRecorderListData(recorderListData);
                     return;
                 }
                 //判断小数点后是否为10位,好弹出保留提示
@@ -1046,9 +1137,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     recorderListData.remove(0);
                     String strRecorder=showAt1+"="+showAt2;
                     recorderListData.add(strRecorder);
+                    RecorderUtil.saveRecorderListData(recorderListData);
                 }else {
                     String strRecorder=showAt1+"="+showAt2;
                     recorderListData.add(strRecorder);
+                    RecorderUtil.saveRecorderListData(recorderListData);
                 }
 
             } catch (Exception ex) {
@@ -1480,39 +1573,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void beforeTextChanged(CharSequence s, int start, int count,
                                       int after) {
         }
-        float theSize;
+
         @Override
         public void afterTextChanged(Editable s) {
-            //上面文本框文本改变后响应处理
-            int lineCount=textView1.getLineCount();
-            //这是在华为荣耀4A手机上,按π再按tan会是lineCount返回值为0,我也不知道为什么,所以只能这样单独处理了
-            if (lineCount == 0){
-                textView1.setTextSize(30);
+            if (btn_equal.getHeight() == App.btn_equal_NormalHeight) {
+                textChanged(60);
+            }else {
+                textChanged(25);
             }
-
-            if(lineCount == 2 && textView1.getTextSize() != theSize){//注意getTextSize()和setTextSize()对应的值不同
-                textView1.setTextSize(30);
-            }else if(lineCount == 3){
-                textView1.setTextSize(20);
-                theSize=textView1.getTextSize();
-            }
-            //下面文本框文本改变后响应处理
-            int lineCount2=textView2.getLineCount();
-            if (lineCount2 == 2){
-                textView2.setTextSize(30);
-            }
-
-            //当文本框字符串长度小于等于8时,字体大小变回默认尺寸
-            if (textView1.length()<9){
-                textView1.setTextSize(60);
-            }
-            if (textView2.length()<9){
-                textView2.setTextSize(60);
-            }
-
         }
     };
     //endregion
+
+    float theSize;
+    private void textChanged(int textSize){
+        //textView1文本改变后响应处理
+        int lineCount=textView1.getLineCount();
+        //在华为荣耀4A手机上,按π再按tan会时lineCount返回值为0,不知道原因,先这样单独处理了
+        if (lineCount == 0){
+            textView1.setTextSize(textSize/2);
+        }
+
+        if(lineCount == 2 && textView1.getTextSize() != theSize){//注意getTextSize()和setTextSize()对应的值不同
+            textView1.setTextSize(textSize/2);
+        }else if(lineCount == 3){
+            textView1.setTextSize(textSize/3);
+            theSize=textView1.getTextSize();
+        }
+        //textView2文本改变后响应处理
+        int lineCount2=textView2.getLineCount();
+        if (lineCount2 == 2){
+            textView2.setTextSize(textSize/2);
+        }
+
+        //当文本框字符串长度小于等于8时,字体大小变回默认尺寸
+        if (textView1.length()<9){
+            textView1.setTextSize(textSize);
+        }
+        if (textView2.length()<9){
+            textView2.setTextSize(textSize);
+        }
+    }
 
     //region重写屏幕滑动dispatchTouchEvent()方法,弹出侧滑菜单
     private float x1=0,x2=0,y1=0,y2=0;
@@ -1545,11 +1646,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //drawerLayout.closeDrawer(GravityCompat.START);
                     drawerLayout.closeDrawer(GravityCompat.START);
 
-                    //在drawerLayout关闭情况下左滑才会执行如下代码,弹出RecorderList
+                    //在drawerLayout关闭情况下左滑才会执行如下代码,弹出历史记录Activity
                     if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
 
                         Intent intent = new Intent(MainActivity.this, RecorderActivity.class);
-                        intent.putStringArrayListExtra("recorderListData", recorderListData);
+                        //Collections.reverse(recorderListData);//逆序传过去
+                        //intent.putStringArrayListExtra("recorderListData", recorderListData);
                         startActivityForResult(intent, 1);
                         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 
@@ -1571,22 +1673,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(), "再按一次退出CC计算器", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
             } else {
-                try {
-                    //退出程序前,保存历史记录
-                    File file = new File(getFilesDir(),"recorderListData.txt");
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                    objectOutputStream.writeObject(recorderListData);
-
-                    fileOutputStream.close();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ///////////////////
-                finish();
-                System.exit(0);
+                finish();//结束Activity
+                System.exit(0);//完全结束整个App进程,所有资源均被释放
             }
             return true;
         }
@@ -2215,7 +2303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @return      返回将^处理到的字符串
      * note         此方法会将÷×替换为/*,此方法用到cc.calculateFormula(),用到BigDecimal
      */
-    private String dealThePow(String str){
+    public String dealThePow(String str){
         //注:这些下标都是基于0开始的
         char[] chars;
         int thePositionOfPow;// ^ 位置
@@ -2287,10 +2375,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 theRightPart=theRightPart.replace('×','*');
                 theRightPart=theRightPart.replace('÷','/');
 
-                //cc.calculateFormula()处理不了  (only figure),那就去掉括号吧
                 theRightPart=theRightPart.substring(1,theRightPart.length()-1);
 
-                theRightPartResult = cc.calculateFormula(theRightPart);
+                theRightPartResult = CalculatorUtil.calculate(theRightPart);
 
                 theLeftPartResult=Double.parseDouble(theLeftPart);
 
@@ -2352,12 +2439,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 theRightPart=theRightPart.replace('×','*');
                 theRightPart=theRightPart.replace('÷','/');
 
-                //cc.calculateFormula()处理不了  (only figure),那就去掉括号吧
                 theLeftPart=theLeftPart.substring(1,theLeftPart.length()-1);
                 theRightPart=theRightPart.substring(1,theRightPart.length()-1);
 
-                theLeftPartResult = cc.calculateFormula(theLeftPart);
-                theRightPartResult = cc.calculateFormula(theRightPart);
+                theLeftPartResult = CalculatorUtil.calculate(theLeftPart);
+                theRightPartResult = CalculatorUtil.calculate(theRightPart);
 
                 theFinalResult=Math.pow(theLeftPartResult,theRightPartResult);
                 //防止出现E
@@ -2384,10 +2470,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1){
             switch (resultCode){
                 case resultCode_backWithUpdate:{
-                    recorderListData=data.getStringArrayListExtra("recorderListData");
+                    recorderListData = RecorderUtil.getRecorderListData();
                     break;
                 }
                 case resultCode_justCopyResult:{
@@ -2416,7 +2503,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case resultCode_copyResultWithUpdate:{
-                    recorderListData=data.getStringArrayListExtra("recorderListData");
+                    recorderListData = RecorderUtil.getRecorderListData();
                     String result = data.getStringExtra("result");
                     textView1.append(result);
                     textView2.setText("");
@@ -2425,7 +2512,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case resultCode_copyFormulatWithUpdate:{
-                    recorderListData=data.getStringArrayListExtra("recorderListData");
+                    recorderListData = RecorderUtil.getRecorderListData();
                     String formula = data.getStringExtra("formula");
                     textView1.append(formula);
                     textView2.setText("");
@@ -2434,7 +2521,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case resultCode_calResultWithUpdate:{
-                    recorderListData=data.getStringArrayListExtra("recorderListData");
+                    recorderListData = RecorderUtil.getRecorderListData();
                     String calResult = data.getStringExtra("calResult");
                     textView1.append(calResult);//追加内容
                     textView2.setText("");
@@ -2445,8 +2532,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void setColor(View v){

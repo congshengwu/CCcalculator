@@ -1,11 +1,8 @@
-package com.calculator.cc;
+package com.calculator.cc.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.media.SoundPool;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +10,18 @@ import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.calculator.cc.activity.MainActivity;
+import com.calculator.cc.MySharedPreferences;
+import com.calculator.cc.R;
+import com.calculator.cc.bean.DrawerItemBean;
+
 import java.util.List;
 
 /**
  * Created by cong on 20170121.
  */
 
-class DrawerAdapter extends BaseAdapter {
+public class DrawerAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
     private List<DrawerItemBean> drawerList;
@@ -27,8 +29,7 @@ class DrawerAdapter extends BaseAdapter {
     private MySharedPreferences sharedPreferences;
     private SoundPool sp;
     private int sound;
-
-    DrawerAdapter(Context context, List<DrawerItemBean> drawerList, SoundPool sp, int sound){
+    public DrawerAdapter(Context context, List<DrawerItemBean> drawerList, SoundPool sp, int sound){
         inflater = LayoutInflater.from(context);
         this.drawerList = drawerList;
         sharedPreferences = new MySharedPreferences(context);

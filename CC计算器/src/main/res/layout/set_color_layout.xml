@@ -3,7 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="360dp"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:id="@+id/set_color_layout"
+    android:visibility="visible">
     <Button
         android:background="@android:color/transparent"
         android:layout_width="match_parent"

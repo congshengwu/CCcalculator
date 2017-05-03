@@ -3,18 +3,22 @@
     <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
     <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
 
-    <!--cls和del文本大小-->
+    <!--cls和del文本大小 默认25sp 分屏18sp-->
     <dimen name="btnClsAndDel_dimen">25sp</dimen>
-    <!--超过25sp可能出现显示不完全问题-->
 
-    <!--单选按钮文本大小-->
+    <!--单选按钮文本大小 默认20sp 分屏10sp-->
     <dimen name="radioText_dimen">20sp</dimen>
-    <!--等于=符号-->
+
+    <!--等于=符号 默认40sp 分屏25sp-->
     <dimen name="btnEqual">40sp</dimen>
-    <!--更多功能按键也可以单独设置-->
+
+    <!--更多功能按键也可以单独设置 默认30sp 分屏20sp-->
     <dimen name="btnFunction_dimen">30sp</dimen>
-    <!--大部分按钮-->
+
+    <!--大部分按钮 默认32sp 分屏20sp-->
     <dimen name="btnMass">32sp</dimen>
 
+    <!--两个TextView文本大小 默认60sp 分屏25sp-->
+    <dimen name="textViewSize">60sp</dimen>
     
 </resources>

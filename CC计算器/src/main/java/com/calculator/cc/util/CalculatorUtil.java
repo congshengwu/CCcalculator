@@ -1,15 +1,13 @@
-package com.calculator.cc;
+package com.calculator.cc.util;
 
 /**
  * Created by 丛 on 2017/1/18 0018.
  */
 
-class AnalyseFormula {
-
-
+public class CalculatorUtil {
 
     //传入字符串公式进行分析计算
-    double calculateFormula(String str){
+    public static double calculate(String str){
         char[] chars = str.toCharArray();
         int chars_index = 0;
         double result = 0;//最终返回变量

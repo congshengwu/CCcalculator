@@ -1,4 +1,4 @@
-package com.calculator.cc;
+package com.calculator.cc.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -20,6 +21,8 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.calculator.cc.R;
+import com.calculator.cc.util.RecorderUtil;
 import com.githang.statusbar.StatusBarCompat;
 
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ public class RecorderActivity extends Activity {
     private final int resultCode_calResultWithUpdate = 8;
 
     private TextView textView_formulaNumber;
-    private  boolean isNeedUpdate;//默认不需要更新,点击删除和清空后值为true
+    private  boolean isNeedUpdate= false;//默认不需要更新,点击删除和清空后值为true
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +72,10 @@ public class RecorderActivity extends Activity {
 
         textView_formulaNumber = (TextView) findViewById(R.id.textView_formulaNumber);
         textView_null = (TextView) findViewById(R.id.textView_null);
-        isNeedUpdate = false;
-        Intent intent=getIntent();
-        recorderListData=intent.getStringArrayListExtra("recorderListData");
-        Collections.reverse(recorderListData);//反向接收
+        //Intent intent=getIntent();
+        //recorderListData=intent.getStringArrayListExtra("recorderListData");
+        recorderListData = RecorderUtil.getRecorderListData();
+        Collections.reverse(recorderListData);//因为要倒序显示
         adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,recorderListData);
         recorderListView= (ListView) findViewById(R.id.recorderListView);
         recorderListView.setAdapter(adapter);
@@ -174,9 +177,8 @@ public class RecorderActivity extends Activity {
                     strCalResult = calResult + "";
                 }
                 if (isNeedUpdate){
-                    Collections.reverse(recorderListData);//正向返回
                     backData.putExtra("calResult",strCalResult);
-                    backData.putExtra("recorderListData",recorderListData);//按计算结果前有可能删除几行list,因此需要回传同步数据
+                    //backData.putExtra("recorderListData",recorderListData);//按计算结果前有可能删除几行list,因此需要回传同步数据
                     setResult(resultCode_calResultWithUpdate,backData);
                 }else {
                     backData.putExtra("calResult",strCalResult);
@@ -191,8 +193,7 @@ public class RecorderActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (isNeedUpdate) {
-                    Collections.reverse(recorderListData);//正向返回
-                    backData.putExtra("recorderListData", recorderListData);
+                    //backData.putExtra("recorderListData", recorderListData);
                     setResult(resultCode_backWithUpdate, backData);
                 }
                 finish();
@@ -205,8 +206,7 @@ public class RecorderActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (isNeedUpdate) {
-            Collections.reverse(recorderListData);//正向返回
-            backData.putExtra("recorderListData", recorderListData);
+            //backData.putExtra("recorderListData", recorderListData);
             setResult(resultCode_backWithUpdate, backData);
         }
         finish();
@@ -235,8 +235,7 @@ public class RecorderActivity extends Activity {
                 //手指向右滑动关闭当前Activtiy
                 if(x2-x1>200 && (y2-y1<200 && y2-y1>-200)){
                     if (isNeedUpdate) {
-                        Collections.reverse(recorderListData);//正向返回
-                        backData.putExtra("recorderListData", recorderListData);
+                        //backData.putExtra("recorderListData", recorderListData);
                         setResult(resultCode_backWithUpdate, backData);
                     }
                     finish();
@@ -270,8 +269,7 @@ public class RecorderActivity extends Activity {
                             int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
                             String result=str.substring(thePostionOfEqual+1,str.length());
                             backData.putExtra("result",result);
-                            Collections.reverse(recorderListData);//正向返回
-                            backData.putExtra("recorderListData", recorderListData);
+                            //backData.putExtra("recorderListData", recorderListData);
                             setResult(resultCode_copyResultWithUpdate, backData);
                         }else {
                             String str=recorderListData.get(position);
@@ -290,8 +288,7 @@ public class RecorderActivity extends Activity {
                             int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
                             String formula=str.substring(0,thePostionOfEqual);
                             backData.putExtra("formula",formula);
-                            Collections.reverse(recorderListData);//正向返回
-                            backData.putExtra("recorderListData", recorderListData);
+                            //backData.putExtra("recorderListData", recorderListData);
                             setResult(resultCode_copyFormulatWithUpdate, backData);
                         }else {
                             String str=recorderListData.get(position);
@@ -317,7 +314,9 @@ public class RecorderActivity extends Activity {
                         isNeedUpdate = true;
 
                         textView_formulaNumber.setText(recorderListData.size()+"/30");
-
+                        Collections.reverse(recorderListData);//存数据要正序存储
+                        RecorderUtil.saveRecorderListData(recorderListData);
+                        Collections.reverse(recorderListData);//因为还要显示,所以再倒序过来
                         if (adapter.isEmpty()){
                             textView_null.setVisibility(View.VISIBLE);
                         }
@@ -327,15 +326,11 @@ public class RecorderActivity extends Activity {
                 return false;
             }
         });
-        // PopupMenu关闭事件
-//        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-//            @Override
-//            public void onDismiss(PopupMenu menu) {
-//                //Toast.makeText(getApplicationContext(), "关闭PopupMenu", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        popupMenu.show();
+        try{
+            popupMenu.show();
+        }catch (Exception e){
+            e.printStackTrace();//未知异常
+        }
     }
 
     //提示对话框
@@ -347,19 +342,20 @@ public class RecorderActivity extends Activity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //适配器清空的话,listView显示的数据也就清空了
+                //适配器清空的话,listView显示的数据也就清空了,即recorderListData数据是空的
                 adapter.clear();
                 isNeedUpdate = true;
                 textView_formulaNumber.setText("0/30");
                 textView_null.setVisibility(View.VISIBLE);
+                Collections.reverse(recorderListData);//存数据要正序存储
+                RecorderUtil.saveRecorderListData(recorderListData);
+                Collections.reverse(recorderListData);//因为还要显示,所以再倒序过来
             }
         });
 
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
+            public void onClick(DialogInterface dialog, int which) {}
         });
 
         AlertDialog dialog = builder.create();
