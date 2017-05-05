@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 //TODO 1.更改图标设计     2.recorder三个按钮修改样式和添加声音     3.设计彩蛋
 //TODO 历史记录加入长按功能,指定删除和指定求和
-// TODO: 2017/5/5 0005 进制转换模式
 /**
  * Created by 丛 on 2017/1/17
  */
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonSound = sharedPreferences.getButtonSound();
         //加载主题颜色信息
         App.appColor = sharedPreferences.getAppColor();
-        //为等于设置主题颜色
+        //region 设置"="按钮背景颜色选择器颜色
         switch (App.appColor){
             case "#ffff4444": {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
@@ -257,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
         }
+        //endregion
         //设置公式和结果颜色
         textView1.setTextColor(Color.parseColor(App.appColor));
         textView2.setTextColor(Color.parseColor(App.appColor));
@@ -299,15 +299,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         drawerLayout.addDrawerListener(drawerToggle);
         //endregion
 
-        //region实例化历史记录类,并加载历史记录
+        //加载计算记录
         recorderListData = RecorderUtil.getRecorderListData();
-        //endregion
+        //此处保证textView有文本时,屏幕旋转或分屏文本不消失
         if (!App.textView1_temp.equals("")){
             textView1.setText(App.textView1_temp);
         }
         if (!App.textView2_temp.equals("")){
             textView2.setText(App.textView2_temp);
         }
+        //此处保证分屏或旋转计算模式保持不变
+        switch (App.calMode){
+            //region 标准
+            case App.calModeStandard:{
+                toolbar.setTitle("标准");
+
+                binary.setVisibility(View.GONE);
+                btn_pi.setVisibility(View.GONE);
+                btn_tan.setVisibility(View.GONE);
+                btn_sin.setVisibility(View.GONE);
+                btn_cos.setVisibility(View.GONE);
+                btn_gen.setVisibility(View.GONE);
+                btn_e.setVisibility(View.GONE);
+                btn_lg.setVisibility(View.GONE);
+                btn_ln.setVisibility(View.GONE);
+                btn_factorial.setVisibility(View.GONE);
+                btn_xn.setVisibility(View.GONE);
+
+                radio10.setChecked(true);
+
+                break;
+            }
+            //endregion
+            //region科学
+            case App.calModeScience: {
+                toolbar.setTitle("科学");
+
+                binary.setVisibility(View.GONE);
+                btn_pi.setVisibility(View.VISIBLE);
+                btn_tan.setVisibility(View.VISIBLE);
+                btn_sin.setVisibility(View.VISIBLE);
+                btn_cos.setVisibility(View.VISIBLE);
+                btn_gen.setVisibility(View.VISIBLE);
+                btn_e.setVisibility(View.VISIBLE);
+                btn_lg.setVisibility(View.VISIBLE);
+                btn_ln.setVisibility(View.VISIBLE);
+                btn_factorial.setVisibility(View.VISIBLE);
+                btn_xn.setVisibility(View.VISIBLE);
+
+                radio10.setChecked(true);
+
+                break;
+            }
+            //endregion
+            //region 进制转换
+            case App.calModeBinary:{
+                toolbar.setTitle("进制转换");
+
+                binary.setVisibility(View.VISIBLE);
+                btn_pi.setVisibility(View.GONE);
+                btn_tan.setVisibility(View.GONE);
+                btn_sin.setVisibility(View.GONE);
+                btn_cos.setVisibility(View.GONE);
+                btn_gen.setVisibility(View.GONE);
+                btn_e.setVisibility(View.GONE);
+                btn_lg.setVisibility(View.GONE);
+                btn_ln.setVisibility(View.GONE);
+                btn_factorial.setVisibility(View.GONE);
+                btn_xn.setVisibility(View.GONE);
+
+                break;
+            }
+            //endregion
+        }
+        //第一次运行APP不会执行此方法
         resizeUi();
     }
     //endregion
@@ -396,18 +461,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void resizeUi(){
-        btn_equal.post(new Runnable() {
+        textView1.post(new Runnable() {
             @Override
             public void run() {
                 //第一次运行获取"="按钮高度
                 if (App.isFirstStartApp){
-                    App.btn_equal_NormalHeight = btn_equal.getHeight();
+                    App.textViewNormalHeight = textView1.getHeight();
                     App.isFirstStartApp = false;
                 }else {
-                    if (btn_equal.getHeight() == App.btn_equal_NormalHeight){
+                    //正常模式
+                    if (textView1.getHeight() == App.textViewNormalHeight){
+                        //公式结果字体大小
                         textView1.setTextSize(60);
                         textView2.setTextSize(60);
-
+                        //按钮们字体大小
                         btn_l.setTextSize(32);
                         btn_r.setTextSize(32);
                         btn_cls.setTextSize(25);
@@ -440,10 +507,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btn_factorial.setTextSize(30);
                         btn_gen.setTextSize(30);
                         btn_xn.setTextSize(30);
-                    }else {
+                        //单选按钮大小设置
+                        radiog1.setOrientation(LinearLayout.VERTICAL);
+                        radiog2.setOrientation(LinearLayout.VERTICAL);
+                        radio2.setTextSize(20);
+                        radio8.setTextSize(20);
+                        radio10.setTextSize(20);
+                        radio16.setTextSize(20);
+                    }
+                    //分屏或横屏模式
+                    else {
+                        //公式结果字体大小
                         textView1.setTextSize(25);
                         textView2.setTextSize(25);
-
+                        //按钮们字体大小
                         btn_l.setTextSize(20);
                         btn_r.setTextSize(20);
                         btn_cls.setTextSize(18);
@@ -476,6 +553,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btn_factorial.setTextSize(18);
                         btn_gen.setTextSize(18);
                         btn_xn.setTextSize(18);
+                        //单选按钮大小设置
+                        radiog1.setOrientation(LinearLayout.HORIZONTAL);
+                        radiog2.setOrientation(LinearLayout.HORIZONTAL);
+                        radio2.setTextSize(10);
+                        radio8.setTextSize(10);
+                        radio10.setTextSize(10);
+                        radio16.setTextSize(10);
                     }
                 }
             }
@@ -517,6 +601,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (position){
                     //region 标准
                     case 0:{
+                        App.calMode = App.calModeStandard;
                         toolbar.setTitle("标准");
 
                         binary.setVisibility(View.GONE);
@@ -539,6 +624,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //endregion
                     //region科学
                     case 1: {
+                        App.calMode = App.calModeScience;
                         toolbar.setTitle("科学");
 
                         binary.setVisibility(View.GONE);
@@ -561,6 +647,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //endregion
                     //region 进制转换
                     case 2:{
+                        App.calMode = App.calModeBinary;
                         toolbar.setTitle("进制转换");
 
                         binary.setVisibility(View.VISIBLE);
@@ -1035,6 +1122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             inputNumber = "";
             textView1.setText("");
             textView2.setText("");
+            App.textView1_temp = "";
+            App.textView2_temp = "";
         }//endregion
         //region 等于
         else if (v.getId() == R.id.btn_equal) {
@@ -1505,7 +1594,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (btn_equal.getHeight() == App.btn_equal_NormalHeight) {
+            if (textView1.getHeight() == App.textViewNormalHeight) {
                 textChanged(60);
             }else {
                 textChanged(25);

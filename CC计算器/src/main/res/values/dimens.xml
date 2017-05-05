@@ -12,8 +12,8 @@
     <!--等于=符号 默认40sp 分屏25sp-->
     <dimen name="btnEqual">40sp</dimen>
 
-    <!--更多功能按键也可以单独设置 默认30sp 分屏20sp-->
-    <dimen name="btnFunction_dimen">30sp</dimen>
+    <!--更多功能按键也可以单独设置 默认25sp 分屏20sp-->
+    <dimen name="btnFunction_dimen">25sp</dimen>
 
     <!--大部分按钮 默认32sp 分屏20sp-->
     <dimen name="btnMass">32sp</dimen>

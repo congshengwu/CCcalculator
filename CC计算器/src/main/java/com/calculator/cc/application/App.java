@@ -21,7 +21,8 @@ public class App extends Application {
 
     public static String textView1_temp = "";//默认为空
     public static String textView2_temp = "";//默认为空
-    public static int btn_equal_NormalHeight;//其值会在第一次启动App的onResume()方法中赋予
+    //其值会在第一次启动App赋予,以这个高度为标准,判断是正常模式还是分屏横屏模式
+    public static int textViewNormalHeight;
     public static boolean isFirstStartApp = true;//这里的高度是指btn_equal的高度
 
     public static String appColor;//主题颜色是全局公共静态值
@@ -31,6 +32,11 @@ public class App extends Application {
     public final static int resultCode_CopyResult = 20;
     public final static int resultCode_CopyFormula = 21;
     public final static int resultCode_CalResult = 22;
+
+    public final static int calModeStandard = 0;
+    public final static int calModeScience = 1;
+    public final static int calModeBinary = 2;
+    public static int calMode = calModeStandard;
 
     @Override
     public void onCreate() {
