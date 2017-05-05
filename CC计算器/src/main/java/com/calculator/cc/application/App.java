@@ -24,6 +24,14 @@ public class App extends Application {
     public static int btn_equal_NormalHeight;//其值会在第一次启动App的onResume()方法中赋予
     public static boolean isFirstStartApp = true;//这里的高度是指btn_equal的高度
 
+    public static String appColor;//主题颜色是全局公共静态值
+
+    public final static int requestCode_openRecorder = 10;
+
+    public final static int resultCode_CopyResult = 20;
+    public final static int resultCode_CopyFormula = 21;
+    public final static int resultCode_CalResult = 22;
+
     @Override
     public void onCreate() {
         super.onCreate();

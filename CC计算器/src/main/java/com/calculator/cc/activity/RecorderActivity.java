@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.calculator.cc.R;
+import com.calculator.cc.application.App;
 import com.calculator.cc.util.RecorderUtil;
 import com.githang.statusbar.StatusBarCompat;
 
@@ -52,28 +55,18 @@ public class RecorderActivity extends Activity {
     private ArrayList<String> recorderListData;
     private ArrayAdapter<String> adapter;
 
-    private final int resultCode_justCopyResult = 2;
-    private final int resultCode_justCopyFormula = 3;
-    private final int resultCode_justCalResult = 4;
-    private final int resultCode_backWithUpdate = 5;
-    private final int resultCode_copyResultWithUpdate = 6;
-    private final int resultCode_copyFormulatWithUpdate = 7;
-    private final int resultCode_calResultWithUpdate = 8;
-
     private TextView textView_formulaNumber;
-    private  boolean isNeedUpdate= false;//默认不需要更新,点击删除和清空后值为true
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //初始化默认字体大小,不跟随系统
+        initFontScale();
         setContentView(R.layout.activity_recorder);
-
         //设置标题栏颜色
-        StatusBarCompat.setStatusBarColor(RecorderActivity.this, Color.parseColor(MainActivity.appColor), true);
+        StatusBarCompat.setStatusBarColor(RecorderActivity.this, Color.parseColor(App.appColor), true);
 
         textView_formulaNumber = (TextView) findViewById(R.id.textView_formulaNumber);
         textView_null = (TextView) findViewById(R.id.textView_null);
-        //Intent intent=getIntent();
-        //recorderListData=intent.getStringArrayListExtra("recorderListData");
         recorderListData = RecorderUtil.getRecorderListData();
         Collections.reverse(recorderListData);//因为要倒序显示
         adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,recorderListData);
@@ -98,8 +91,8 @@ public class RecorderActivity extends Activity {
         btn_cls2 = (Button) findViewById(R.id.btn_cls2);
         btn_equal2 = (Button) findViewById(R.id.btn_equal2);
         btn_back = (Button) findViewById(R.id.btn_back);
-        //设置按钮颜色
-        switch (MainActivity.appColor){
+        //region 设置按钮颜色
+        switch (App.appColor){
             case "#ffff4444": {
                 btn_cls2.setBackgroundResource(R.drawable.set_color_red);
                 btn_equal2.setBackgroundResource(R.drawable.set_color_red);
@@ -137,11 +130,45 @@ public class RecorderActivity extends Activity {
                 break;
             }
         }
+        //endregion
 
         recorderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showPopupMenu(view,position);
+                if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_NONE) {
+                    showPopupMenu(view, position);
+                }else {
+                    if (recorderListView.isItemChecked(position)){
+                        view.setBackgroundColor(Color.parseColor(App.appColor));
+                    }else {
+                        view.setBackgroundColor(Color.parseColor("#f7f7f7"));
+                    }
+                    //回到单选模式
+                    if (getListCheckedItemCount() == 0){
+                        recorderListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+                        recorderListView.clearChoices();
+                        btn_cls2.setText("清空");
+                        btn_equal2.setText("求和");
+                        btn_back.setText("返回");
+                    }
+                }
+            }
+        });
+
+        recorderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //进入多选模式
+                if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_NONE){
+                    recorderListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                    recorderListView.clearChoices();
+                    recorderListView.setItemChecked(position,true);
+                    view.setBackgroundColor(Color.parseColor(App.appColor));
+                    btn_cls2.setText("选中删除");
+                    btn_equal2.setText("选中求和");
+                    btn_back.setText("取消");
+                }
+                return true;//false不拦截,true拦截
             }
         });
 
@@ -153,7 +180,36 @@ public class RecorderActivity extends Activity {
                     return;
                 }
                 //内容不为空,弹出防误触对话框
-                showDialog(adapter);
+                if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_NONE) {
+                    showDialog(adapter);
+                }else {
+                    //加载并开启删除一行动画
+                    Animation animation = AnimationUtils.loadAnimation(RecorderActivity.this,R.anim.del_one_recoorderlist);
+                    //删除选中计算记录数据
+                    int n = 0;
+                    for (int id:getListCheckedItemIds()) {
+                        id-=n;
+                        recorderListView.getChildAt(id).startAnimation(animation);
+                        recorderListData.remove(id);
+                        n++;
+                    }
+                    //重新设置适配器即可
+                    recorderListView.setAdapter(adapter);
+                    //回到单选模式
+                    recorderListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+                    recorderListView.clearChoices();
+                    btn_cls2.setText("清空");
+                    btn_equal2.setText("求和");
+                    btn_back.setText("返回");
+
+                    textView_formulaNumber.setText(recorderListData.size()+"/30");
+                    Collections.reverse(recorderListData);//存数据要正序存储
+                    RecorderUtil.saveRecorderListData(recorderListData);
+                    Collections.reverse(recorderListData);//因为还要显示,所以再倒序过来
+                    if (adapter.isEmpty()){
+                        textView_null.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
         btn_equal2.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +219,17 @@ public class RecorderActivity extends Activity {
                 if (adapter.isEmpty()){
                     return;
                 }
-                String[]  strs= recorderListData.toArray(new String[recorderListData.size()]);
+                String[] strs;
+                if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_NONE) {
+                    strs = recorderListData.toArray(new String[recorderListData.size()]);
+                }else {
+                    strs = new String[getListCheckedItemCount()];
+                    int n = 0;
+                    for (int id:getListCheckedItemIds()){
+                        strs[n] = recorderListData.get(id);
+                        n++;
+                    }
+                }
                 double calResult=0;
                 for (String str:strs){
                     int thePositionOfEqual = str.indexOf("=");
@@ -176,14 +242,8 @@ public class RecorderActivity extends Activity {
                 }else {
                     strCalResult = calResult + "";
                 }
-                if (isNeedUpdate){
-                    backData.putExtra("calResult",strCalResult);
-                    //backData.putExtra("recorderListData",recorderListData);//按计算结果前有可能删除几行list,因此需要回传同步数据
-                    setResult(resultCode_calResultWithUpdate,backData);
-                }else {
-                    backData.putExtra("calResult",strCalResult);
-                    setResult(resultCode_justCalResult,backData);
-                }
+                backData.putExtra("calResult",strCalResult);
+                setResult(App.resultCode_CalResult,backData);
 
                 finish();
                 overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
@@ -192,9 +252,16 @@ public class RecorderActivity extends Activity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNeedUpdate) {
-                    //backData.putExtra("recorderListData", recorderListData);
-                    setResult(resultCode_backWithUpdate, backData);
+                if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE){
+                    for (int id:getListCheckedItemIds()){
+                        recorderListView.getChildAt(id).setBackgroundColor(Color.parseColor("#f7f7f7"));
+                    }
+                    recorderListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+                    recorderListView.clearChoices();
+                    btn_cls2.setText("清空");
+                    btn_equal2.setText("求和");
+                    btn_back.setText("返回");
+                    return;
                 }
                 finish();
                 overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
@@ -202,12 +269,52 @@ public class RecorderActivity extends Activity {
         });
     }
 
+    private int[] getListCheckedItemIds(){
+        final int[] ids = new int[recorderListView.getCount()];
+        int checkedCount = 0;
+        for(int i = 0;i < recorderListView.getCount(); i++) {
+            if (recorderListView.isItemChecked(i)) {
+                ids[checkedCount++] = i;
+            }
+        }
+        if (checkedCount == recorderListView.getCount()) {
+            return ids;
+        } else {
+            final int[] result = new int[checkedCount];
+            System.arraycopy(ids, 0, result, 0, checkedCount);
+            return result;
+        }
+    }
+    private int getListCheckedItemCount(){
+        final int[] ids = new int[recorderListView.getCount()];
+        int checkedCount = 0;
+        for(int i = 0;i < recorderListView.getCount(); i++) {
+            if (recorderListView.isItemChecked(i)) {
+                ids[checkedCount++] = i;
+            }
+        }
+        if (checkedCount == recorderListView.getCount()) {
+            return ids.length;
+        } else {
+            final int[] result = new int[checkedCount];
+            System.arraycopy(ids, 0, result, 0, checkedCount);
+            return result.length;
+        }
+    }
+
     //重写返回按键
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (isNeedUpdate) {
-            //backData.putExtra("recorderListData", recorderListData);
-            setResult(resultCode_backWithUpdate, backData);
+        if (recorderListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE){
+            for (int id:getListCheckedItemIds()){
+                recorderListView.getChildAt(id).setBackgroundColor(Color.parseColor("#f7f7f7"));
+            }
+            recorderListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+            recorderListView.clearChoices();
+            btn_cls2.setText("清空");
+            btn_equal2.setText("求和");
+            btn_back.setText("返回");
+            return true;
         }
         finish();
         overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
@@ -234,16 +341,9 @@ public class RecorderActivity extends Activity {
                 y2=ev.getY();
                 //手指向右滑动关闭当前Activtiy
                 if(x2-x1>200 && (y2-y1<200 && y2-y1>-200)){
-                    if (isNeedUpdate) {
-                        //backData.putExtra("recorderListData", recorderListData);
-                        setResult(resultCode_backWithUpdate, backData);
-                    }
                     finish();
                     overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
                 }
-                //手指向左滑动打
-                //else if(x1-x2>200){
-                //}
                 break;
         }
 
@@ -264,39 +364,21 @@ public class RecorderActivity extends Activity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_result:{
-                        if (isNeedUpdate) {
-                            String str=recorderListData.get(position);
-                            int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
-                            String result=str.substring(thePostionOfEqual+1,str.length());
-                            backData.putExtra("result",result);
-                            //backData.putExtra("recorderListData", recorderListData);
-                            setResult(resultCode_copyResultWithUpdate, backData);
-                        }else {
-                            String str=recorderListData.get(position);
-                            int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
-                            String result=str.substring(thePostionOfEqual+1,str.length());
-                            backData.putExtra("result",result);
-                            setResult(resultCode_justCopyResult,backData);
-                        }
+                        String str=recorderListData.get(position);
+                        int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
+                        String result=str.substring(thePostionOfEqual+1,str.length());
+                        backData.putExtra("result",result);
+                        setResult(App.resultCode_CopyResult,backData);
                         finish();
                         overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
                         break;
                     }
                     case R.id.action_formula:{
-                        if (isNeedUpdate) {
-                            String str=recorderListData.get(position);
-                            int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
-                            String formula=str.substring(0,thePostionOfEqual);
-                            backData.putExtra("formula",formula);
-                            //backData.putExtra("recorderListData", recorderListData);
-                            setResult(resultCode_copyFormulatWithUpdate, backData);
-                        }else {
-                            String str=recorderListData.get(position);
-                            int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
-                            String formula=str.substring(0,thePostionOfEqual);
-                            backData.putExtra("formula",formula);
-                            setResult(resultCode_justCopyFormula,backData);
-                        }
+                        String str=recorderListData.get(position);
+                        int thePostionOfEqual=str.indexOf("=");//返回值是以0开始的
+                        String formula=str.substring(0,thePostionOfEqual);
+                        backData.putExtra("formula",formula);
+                        setResult(App.resultCode_CopyFormula,backData);
 
                         finish();
                         overridePendingTransition(R.anim.in_from_left,R.anim.out_to_right);
@@ -311,7 +393,6 @@ public class RecorderActivity extends Activity {
                         //重新设置适配器即可
                         recorderListView.setAdapter(adapter);
 
-                        isNeedUpdate = true;
 
                         textView_formulaNumber.setText(recorderListData.size()+"/30");
                         Collections.reverse(recorderListData);//存数据要正序存储
@@ -344,7 +425,6 @@ public class RecorderActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 //适配器清空的话,listView显示的数据也就清空了,即recorderListData数据是空的
                 adapter.clear();
-                isNeedUpdate = true;
                 textView_formulaNumber.setText("0/30");
                 textView_null.setVisibility(View.VISIBLE);
                 Collections.reverse(recorderListData);//存数据要正序存储
@@ -360,7 +440,16 @@ public class RecorderActivity extends Activity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
 
+    //初始化字体,不跟随系统字体大小
+    private void initFontScale(){
+        Configuration configuration = getResources().getConfiguration();
+        configuration.fontScale = 1f;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        metrics.scaledDensity = configuration.fontScale*metrics.density;
+        getBaseContext().getResources().updateConfiguration(configuration,metrics);
     }
 
 }

@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -45,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 //TODO 1.更改图标设计     2.recorder三个按钮修改样式和添加声音     3.设计彩蛋
 //TODO 历史记录加入长按功能,指定删除和指定求和
+// TODO: 2017/5/5 0005 进制转换模式
 /**
  * Created by 丛 on 2017/1/17
  */
@@ -115,14 +115,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView egg;
 
-    private final int resultCode_justCopyResult = 2;
-    private final int resultCode_justCopyFormula = 3;
-    private final int resultCode_justCalResult = 4;
-    private final int resultCode_backWithUpdate = 5;
-    private final int resultCode_copyResultWithUpdate = 6;
-    private final int resultCode_copyFormulatWithUpdate = 7;
-    private final int resultCode_calResultWithUpdate = 8;
-
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
     private LinearLayout binary;
@@ -140,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<Button> btnColorList;
 
     private boolean isColorListOpen = false;
-    public static String appColor = "re";//主题颜色是全局公共静态值
     //endregion
 
     //region findViewById()方法
@@ -190,10 +181,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        //toggleButton_sound = (SwitchCompat) findViewById(R.id.toggleButton_sound);
-        //textView_sound = (TextView) findViewById(R.id.textView_sound);
-        //linearLayout_sound = (LinearLayout) findViewById(R.id.linearLayout_sound);
-
         egg = (ImageView) findViewById(R.id.egg);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -236,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //加载声音配置信息
         buttonSound = sharedPreferences.getButtonSound();
         //加载主题颜色信息
-        appColor = sharedPreferences.getAppColor();
+        App.appColor = sharedPreferences.getAppColor();
         //为等于设置主题颜色
-        switch (appColor){
+        switch (App.appColor){
             case "#ffff4444": {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_red);
@@ -271,17 +258,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         //设置公式和结果颜色
-        textView1.setTextColor(Color.parseColor(appColor));
-        textView2.setTextColor(Color.parseColor(appColor));
+        textView1.setTextColor(Color.parseColor(App.appColor));
+        textView2.setTextColor(Color.parseColor(App.appColor));
         //设置状态栏颜色
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor(appColor), true);
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor(App.appColor), true);
         //region 加载toolbar
         //设置Toolbar标题
         toolbar.setTitle("标准");
         //设置标题文字颜色
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));//白色
         //设置标题背景颜色
-        toolbar.setBackgroundColor(Color.parseColor(appColor));
+        toolbar.setBackgroundColor(Color.parseColor(App.appColor));
         setSupportActionBar(toolbar);
         try {
             getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -367,9 +354,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
-                //Collections.reverse(recorderListData);//逆序传过去
-                //intent.putStringArrayListExtra("recorderListData",recorderListData);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent,App.requestCode_openRecorder);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
@@ -378,9 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
-                //Collections.reverse(recorderListData);//逆序传过去
-                //intent.putStringArrayListExtra("recorderListData",recorderListData);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent,App.requestCode_openRecorder);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
@@ -1163,10 +1146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(checkedId==R.id.radio2){
                     if (buttonSound)
                         sp.play(sound_button_equalAndBinary,1,1,0,0,1);
-//                    btn_lg.setEnabled(false);
-//                    btn_tan.setEnabled(false);
-//                    btn_sin.setEnabled(false);
-//                    btn_cos.setEnabled(false);
                     btn_0.setEnabled(true);
                     btn_1.setEnabled(true);
                     btn_2.setEnabled(false);
@@ -1187,26 +1166,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_percent.setEnabled(false);
                     btn_equal.setEnabled(false);
 
-//                    btn_gen.setEnabled(false);
-//                    //btn_x2.setEnabled(false);
-//                    //btn_x3.setEnabled(false);
-//                    btn_xn.setEnabled(false);
-//                    btn_e.setEnabled(false);
-//                    btn_ln.setEnabled(false);
-//                    btn_factorial.setEnabled(false);
-//                    btn_pi.setEnabled(false);
                     btn_l.setText("(");
                     btn_r.setText(")");
                     btn_divide.setText("÷");
                     btn_multiply.setText("×");
                     btn_minus.setText("-");
                     btn_plus.setText("+");
-//                    btn_plus.setText("+");
-//                    btn_minus.setText("-");
-//                    btn_multiply.setText("×");
-//                    btn_divide.setText("÷");
-//                    btn_percent.setText("%");
-//                    btn_dot.setText(".");
                     try {
                         int temp;
                         if (mode == 8) {
@@ -1265,10 +1230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else if(checkedId==R.id.radio8){
                     if (buttonSound)
                         sp.play(sound_button_equalAndBinary,1,1,0,0,1);
-//                    btn_lg.setEnabled(false);
-//                    btn_tan.setEnabled(false);
-//                    btn_sin.setEnabled(false);
-//                    btn_cos.setEnabled(false);
                     btn_0.setEnabled(true);
                     btn_1.setEnabled(true);
                     btn_2.setEnabled(true);
@@ -1288,14 +1249,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_dot.setEnabled(false);
                     btn_percent.setEnabled(false);
                     btn_equal.setEnabled(false);
-                    //btn_x2.setEnabled(false);
-//                    btn_xn.setEnabled(false);
-//                    btn_gen.setEnabled(false);
-//                    //btn_x3.setEnabled(false);
-//                    btn_e.setEnabled(false);
-//                    btn_ln.setEnabled(false);
-//                    btn_factorial.setEnabled(false);
-//                    btn_pi.setEnabled(false);
 
                     btn_l.setText("(");
                     btn_r.setText(")");
@@ -1365,10 +1318,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(checkedId==R.id.radio10){
                     if (buttonSound)
                         sp.play(sound_button_equalAndBinary,1,1,0,0,1);
-//                    btn_lg.setEnabled(true);
-//                    btn_tan.setEnabled(true);
-//                    btn_sin.setEnabled(true);
-//                    btn_cos.setEnabled(true);
                     btn_0.setEnabled(true);
                     btn_1.setEnabled(true);
                     btn_2.setEnabled(true);
@@ -1388,14 +1337,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_dot.setEnabled(true);
                     btn_percent.setEnabled(true);
                     btn_equal.setEnabled(true);
-//                    //btn_x2.setEnabled(true);
-//                    btn_xn.setEnabled(true);
-//                    btn_gen.setEnabled(true);
-//                    //btn_x3.setEnabled(true);
-//                    btn_e.setEnabled(true);
-//                    btn_ln.setEnabled(true);
-//                    btn_factorial.setEnabled(true);
-//                    btn_pi.setEnabled(true);
 
                     btn_l.setText("(");
                     btn_r.setText(")");
@@ -1441,10 +1382,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else if(checkedId==R.id.radio16){
                     if (buttonSound)
                         sp.play(sound_button_equalAndBinary,1,1,0,0,1);
-//                    btn_lg.setEnabled(false);
-//                    btn_tan.setEnabled(false);
-//                    btn_sin.setEnabled(false);
-//                    btn_cos.setEnabled(false);
                     btn_0.setEnabled(true);
                     btn_1.setEnabled(true);
                     btn_2.setEnabled(true);
@@ -1464,14 +1401,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_dot.setEnabled(false);
                     btn_percent.setEnabled(false);
                     btn_equal.setEnabled(false);
-                    //btn_x2.setEnabled(false);
-//                    btn_xn.setEnabled(false);
-//                    btn_gen.setEnabled(false);
-//                    //btn_x3.setEnabled(false);
-//                    btn_e.setEnabled(false);
-//                    btn_ln.setEnabled(false);
-//                    btn_factorial.setEnabled(false);
-//                    btn_pi.setEnabled(false);
 
                     btn_l.setText("A");
                     btn_r.setText("B");
@@ -1650,9 +1579,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
 
                         Intent intent = new Intent(MainActivity.this, RecorderActivity.class);
-                        //Collections.reverse(recorderListData);//逆序传过去
-                        //intent.putStringArrayListExtra("recorderListData", recorderListData);
-                        startActivityForResult(intent, 1);
+                        startActivityForResult(intent, App.requestCode_openRecorder);
                         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 
                     }
@@ -2149,7 +2076,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
                     inputNumber = "0";
                     textView1.append(inputNumber);
-                    //inputNumber = "";
                     return;
                 }
                 if (x1 < 0){//tan可能textView1中产生负数,因此要在左右加括号
@@ -2197,7 +2123,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 x1 = Math.sin(x1 * Math.PI / 180);//求tan值
                 BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
                 bg=bg.stripTrailingZeros();
-                //x1 = bg.setScale(10, BigDecimal.ROUND_HALF_UP).doubleValue();
                 try {
                     int length = inputNumber.length();
                     textView1.setText(showAt1.substring(0, textView1.length() - length));//删掉textBox1中需要求tan的数
@@ -2207,7 +2132,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
                     inputNumber = "0";
                     textView1.append(inputNumber);
-                    //inputNumber = "";
                     return;
                 }
                 if (x1 < 0){//sin可能textView1中产生负数,因此要在左右加括号
@@ -2255,7 +2179,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 x1 = Math.cos(x1 * Math.PI / 180);//求tan值
                 BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
                 bg=bg.stripTrailingZeros();
-                //x1 = bg.setScale(10, BigDecimal.ROUND_HALF_UP).doubleValue();
                 try {
                     int length = inputNumber.length();
                     textView1.setText(showAt1.substring(0, textView1.length() - length));
@@ -2265,7 +2188,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
                     inputNumber = "0";
                     textView1.append(inputNumber);
-                    //inputNumber = "";
                     return;
                 }
                 if (x1 < 0){//cos可能textView1中产生负数,因此要在左右加括号
@@ -2471,13 +2393,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1){
+        if (requestCode == App.requestCode_openRecorder){
             switch (resultCode){
-                case resultCode_backWithUpdate:{
-                    recorderListData = RecorderUtil.getRecorderListData();
-                    break;
-                }
-                case resultCode_justCopyResult:{
+                case App.resultCode_CopyResult:{
                     String result = data.getStringExtra("result");
                     textView1.append(result);
                     textView2.setText("");
@@ -2485,7 +2403,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isEqualPress = 0;
                     break;
                 }
-                case resultCode_justCopyFormula:{
+                case App.resultCode_CopyFormula:{
                     String formula = data.getStringExtra("formula");
                     textView1.append(formula);
                     textView2.setText("");
@@ -2493,7 +2411,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isEqualPress = 0;
                     break;
                 }
-                case resultCode_justCalResult:{
+                case App.resultCode_CalResult:{
                     String calResult = data.getStringExtra("calResult");
                     textView1.append(calResult);//追加内容
                     textView2.setText("");
@@ -2502,35 +2420,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(MainActivity.this,"总和为:"+calResult,Toast.LENGTH_LONG).show();
                     break;
                 }
-                case resultCode_copyResultWithUpdate:{
-                    recorderListData = RecorderUtil.getRecorderListData();
-                    String result = data.getStringExtra("result");
-                    textView1.append(result);
-                    textView2.setText("");
-                    inputNumber = result;
-                    isEqualPress = 0;
-                    break;
-                }
-                case resultCode_copyFormulatWithUpdate:{
-                    recorderListData = RecorderUtil.getRecorderListData();
-                    String formula = data.getStringExtra("formula");
-                    textView1.append(formula);
-                    textView2.setText("");
-                    inputNumber = "";
-                    isEqualPress = 0;
-                    break;
-                }
-                case resultCode_calResultWithUpdate:{
-                    recorderListData = RecorderUtil.getRecorderListData();
-                    String calResult = data.getStringExtra("calResult");
-                    textView1.append(calResult);//追加内容
-                    textView2.setText("");
-                    inputNumber = calResult;
-                    isEqualPress = 0;
-                    Toast.makeText(MainActivity.this,"总和为:"+calResult,Toast.LENGTH_SHORT).show();
-                    break;
-                }
             }
+            recorderListData = RecorderUtil.getRecorderListData();
         }
     }
 
@@ -2554,18 +2445,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#ffff4444";
+                App.appColor = "#ffff4444";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
             case R.id.btn_color_green:{
@@ -2573,18 +2464,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#3CB371";
+                App.appColor = "#3CB371";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_green);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
             case R.id.btn_color_blue:{
@@ -2592,18 +2483,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#00BFFF";
+                App.appColor = "#00BFFF";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_blue);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
             case R.id.btn_color_pink:{
@@ -2611,18 +2502,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#FF69B4";
+                App.appColor = "#FF69B4";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_pink);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
             case R.id.btn_color_violet:{
@@ -2630,18 +2521,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#EE82EE";
+                App.appColor = "#EE82EE";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_violet);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
             case R.id.btn_color_yellow:{
@@ -2649,18 +2540,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                appColor = "#FFA500";
+                App.appColor = "#FFA500";
                 //设置公式和结果颜色
-                textView1.setTextColor(Color.parseColor(appColor));
-                textView2.setTextColor(Color.parseColor(appColor));
+                textView1.setTextColor(Color.parseColor(App.appColor));
+                textView2.setTextColor(Color.parseColor(App.appColor));
                 //设置状态栏颜色
-                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(appColor), true);
+                StatusBarCompat.setStatusBarColor(MainActivity.this, Color.parseColor(App.appColor), true);
                 //设置标题栏颜色
-                toolbar.setBackgroundColor(Color.parseColor(appColor));
+                toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_yellow);
                 //将用户颜色信息存起来
-                sharedPreferences.setAppColor(appColor);
+                sharedPreferences.setAppColor(App.appColor);
                 break;
             }
         }
@@ -2671,7 +2562,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ObjectAnimator animator = ObjectAnimator.ofFloat(btnColorList.get(i),"translationY",btn_color_red.getMeasuredHeight()*(i+1));
             animator.setDuration(500);
             animator.setInterpolator(new OvershootInterpolator());
-            //animator.setStartDelay(500);
             animator.start();
         }
     }
@@ -2679,8 +2569,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < btnColorList.size(); i++) {
             ObjectAnimator animator = ObjectAnimator.ofFloat(btnColorList.get(i),"translationY",-btn_color_red.getMeasuredHeight()*(i+1));
             animator.setDuration(500);
-            //animator.setInterpolator(new BounceInterpolator());
-            //animator.setStartDelay(500);
             animator.start();
         }
     }
