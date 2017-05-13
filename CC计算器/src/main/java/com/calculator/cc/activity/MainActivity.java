@@ -1,7 +1,9 @@
 package com.calculator.cc.activity;
 
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -42,8 +44,7 @@ import com.githang.statusbar.StatusBarCompat;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-//TODO 1.更改图标设计     2.recorder三个按钮修改样式和添加声音     3.设计彩蛋
-//TODO 历史记录加入长按功能,指定删除和指定求和
+//TODO 改变Icon快捷方式被删
 /**
  * Created by 丛 on 2017/1/17
  */
@@ -131,6 +132,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<Button> btnColorList;
 
     private boolean isColorListOpen = false;
+
+    private PackageManager packageManager;
+    private ComponentName componentName_red;
+    private ComponentName componentName_green;
+    private ComponentName componentName_blue;
+    private ComponentName componentName_pink;
+    private ComponentName componentName_violet;
+    private ComponentName componentName_yellow;
     //endregion
 
     //region findViewById()方法
@@ -209,11 +218,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     //region onCreate()方法,设置按钮监听,调用处理侧滑菜单DrawerFunction()方法
     protected void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         //初始化默认字体大小,不跟随系统
         initFontScale();
         setContentView(R.layout.activity_main);
+
+        packageManager = getApplicationContext().getPackageManager();
+        componentName_red = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivity");
+        componentName_green = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityGreenIcon");
+        componentName_blue = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityBlueIcon");
+        componentName_pink = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityPinkIcon");
+        componentName_violet = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityVioletIcon");
+        componentName_yellow = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityYellowIcon");
         //调用实例化各控件方法
         findIdFunction();
 
@@ -225,32 +241,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         App.appColor = sharedPreferences.getAppColor();
         //region 设置"="按钮背景颜色选择器颜色
         switch (App.appColor){
-            case "#ffff4444": {
+            case App.colorRed: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_red);
                 break;
             }
-            case "#3CB371": {
+            case App.colorGreen: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_green);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_green);
                 break;
             }
-            case "#00BFFF": {
+            case App.colorBlue: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_blue);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_blue);
                 break;
             }
-            case "#FF69B4": {
+            case App.colorPink: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_pink);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_pink);
                 break;
             }
-            case "#EE82EE": {
+            case App.colorViolet: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_violet);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_violet);
                 break;
             }
-            case "#FFA500": {
+            case App.colorYellow: {
                 btn_equal.setBackgroundResource(R.drawable.button_equal_selector_yellow);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_yellow);
                 break;
@@ -417,7 +433,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         openRecorder1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
                 startActivityForResult(intent,App.requestCode_openRecorder);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
@@ -426,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         openRecorder2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(MainActivity.this,RecorderActivity.class);
                 startActivityForResult(intent,App.requestCode_openRecorder);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
@@ -672,7 +686,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     //endregion
-    
+
     @Override
     //region按钮们的响应事件函数onClick()
     public void onClick(View v) {
@@ -1406,7 +1420,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //region十进制
                 if(checkedId==R.id.radio10){
                     if (buttonSound)
-                        sp.play(sound_button_equalAndBinary,1,1,0,0,1);
+                        sp.play(sound_button_equalAndBinary, 1, 1, 0, 0, 1);
                     btn_0.setEnabled(true);
                     btn_1.setEnabled(true);
                     btn_2.setEnabled(true);
@@ -1680,7 +1694,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //endregion
 
-    //region重写返回键,实现双击返回
+    //region onKeyDown() 双击返回
     private long exitTime = 0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -1690,6 +1704,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 exitTime = System.currentTimeMillis();
             } else {
                 finish();//结束Activity
+                //退出APP后改变图标
+                switch (App.appColor){
+                    case App.colorRed: changeIconRed(); break;
+                    case App.colorGreen: changeIconGreen(); break;
+                    case App.colorBlue: changeIconBlue(); break;
+                    case App.colorPink: changeIconPink(); break;
+                    case App.colorViolet: changeIconViolet(); break;
+                    case App.colorYellow: changeIconYellow(); break;
+                }
                 System.exit(0);//完全结束整个App进程,所有资源均被释放
             }
             return true;
@@ -2514,6 +2537,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //回调函数
     public void setColor(View v){
         switch (v.getId()){
             case R.id.btn_color_now:{
@@ -2534,7 +2558,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#ffff4444";
+                App.appColor = App.colorRed;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2553,7 +2577,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#3CB371";
+                App.appColor = App.colorGreen;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2572,7 +2596,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#00BFFF";
+                App.appColor = App.colorBlue;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2591,7 +2615,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#FF69B4";
+                App.appColor = App.colorPink;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2610,7 +2634,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#EE82EE";
+                App.appColor = App.colorViolet;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2629,7 +2653,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 CloseSetColorAnim();
                 isColorListOpen = false;
 
-                App.appColor = "#FFA500";
+                App.appColor = App.colorYellow;
                 //设置公式和结果颜色
                 textView1.setTextColor(Color.parseColor(App.appColor));
                 textView2.setTextColor(Color.parseColor(App.appColor));
@@ -2671,4 +2695,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getBaseContext().getResources().updateConfiguration(configuration,metrics);
     }
 
+
+    public void changeIconRed() {
+        enableComponent(componentName_red);
+        disableComponent(componentName_green);
+        disableComponent(componentName_blue);
+        disableComponent(componentName_pink);
+        disableComponent(componentName_violet);
+        disableComponent(componentName_yellow);
+    }
+    public void changeIconGreen() {
+        try {
+            enableComponent(componentName_green);
+            disableComponent(componentName_red);
+            disableComponent(componentName_blue);
+            disableComponent(componentName_pink);
+            disableComponent(componentName_violet);
+            disableComponent(componentName_yellow);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void changeIconBlue() {
+        enableComponent(componentName_blue);
+        disableComponent(componentName_red);
+        disableComponent(componentName_green);
+        disableComponent(componentName_pink);
+        disableComponent(componentName_violet);
+        disableComponent(componentName_yellow);
+    }
+    public void changeIconPink() {
+        enableComponent(componentName_pink);
+        disableComponent(componentName_red);
+        disableComponent(componentName_blue);
+        disableComponent(componentName_green);
+        disableComponent(componentName_violet);
+        disableComponent(componentName_yellow);
+    }
+    public void changeIconViolet() {
+        enableComponent(componentName_violet);
+        disableComponent(componentName_red);
+        disableComponent(componentName_blue);
+        disableComponent(componentName_green);
+        disableComponent(componentName_pink);
+        disableComponent(componentName_yellow);
+    }
+    public void changeIconYellow() {
+        enableComponent(componentName_yellow);
+        disableComponent(componentName_red);
+        disableComponent(componentName_blue);
+        disableComponent(componentName_pink);
+        disableComponent(componentName_violet);
+        disableComponent(componentName_green);
+    }
+
+    private void enableComponent(ComponentName componentName) {
+        packageManager.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+    private void disableComponent(ComponentName componentName) {
+        packageManager.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+    }
 }

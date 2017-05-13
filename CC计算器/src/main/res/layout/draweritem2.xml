@@ -24,5 +24,10 @@
         android:layout_marginRight="10dp"
         android:id="@+id/switchCompat_drawer2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:checked="true"/>
+    <!--check默认为true,因为默认设置为false,当声音为开启状态时,
+        用户第一次打开APP,会执行设置switch为开启状态代码,switch由
+        默认false状态变为true状态,执行switch状态改变回调函数,
+        会非预期播放一次声音,默认状态设置为true就不会有问题-->
 </RelativeLayout>

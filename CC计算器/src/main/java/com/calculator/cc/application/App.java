@@ -13,6 +13,7 @@ import android.util.Log;
  * 4.满屏->分屏 onMultiWindowModeChanged() isInMultiWindowMode=true -> onCreate() isInMultiWindowMode=true
  *   分屏->满屏 onCreat() isInMultiWindowMode=true -> onMultiWindowModeChanged() isInMultiWindowMode=false
  * 5.屏幕旋转和分屏会销毁Activity,再执行一遍onCreate()->onStart()->onResume(),而onResume()方法中会对屏幕进行适配
+ * 6.sharedPreference.setColor(),传入的参数都是App.appColor
  */
 
 public class App extends Application {
@@ -26,6 +27,12 @@ public class App extends Application {
     public static boolean isFirstStartApp = true;//这里的高度是指btn_equal的高度
 
     public static String appColor;//主题颜色是全局公共静态值
+    public final static String colorRed = "#ffff4444";
+    public final static String colorGreen = "#3CB371";
+    public final static String colorBlue = "#00BFFF";
+    public final static String colorPink = "#FF69B4";
+    public final static String colorViolet = "#EE82EE";
+    public final static String colorYellow = "#FFA500";
 
     public final static int requestCode_openRecorder = 10;
 

@@ -20,6 +20,66 @@
             </intent-filter>
         </activity>
 
+        <activity-alias
+            android:name=".activity.MainActivityGreenIcon"
+            android:targetActivity=".activity.MainActivity"
+            android:label="CC计算器"
+            android:icon="@mipmap/ic_launcher_green"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".activity.MainActivityBlueIcon"
+            android:targetActivity=".activity.MainActivity"
+            android:label="CC计算器"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".activity.MainActivityPinkIcon"
+            android:targetActivity=".activity.MainActivity"
+            android:label="CC计算器"
+            android:icon="@mipmap/ic_launcher_pink"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".activity.MainActivityVioletIcon"
+            android:targetActivity=".activity.MainActivity"
+            android:label="CC计算器"
+            android:icon="@mipmap/ic_launcher_violet"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".activity.MainActivityYellowIcon"
+            android:targetActivity=".activity.MainActivity"
+            android:label="CC计算器"
+            android:icon="@mipmap/ic_launcher_yellow"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <activity
             android:name=".activity.RecorderActivity"
             android:resizeableActivity="true"/>
