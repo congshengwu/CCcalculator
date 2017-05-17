@@ -103,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:onClick="onBtnLeftFourClick"
                     android:id="@+id/btn_pi"
@@ -113,7 +113,7 @@
                     android:text="π"
                     android:textSize="@dimen/btnFunction_dimen"/>
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:onClick="onBtnLeftFourClick"
                     android:id="@+id/btn_e"
@@ -125,7 +125,7 @@
                     android:textSize="@dimen/btnFunction_dimen" />
 
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_l"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -133,7 +133,7 @@
                     android:text="@string/btnLeft_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_r"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -141,7 +141,7 @@
                     android:text="@string/btnRight_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_cls"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -149,7 +149,7 @@
                     android:text="@string/cls_name"
                     android:textSize="@dimen/btnClsAndDel_dimen" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_del"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -163,7 +163,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:textAllCaps="false"
                     android:onClick="onBtnLeftFourClick"
@@ -174,7 +174,7 @@
                     android:text="@string/tan_name"
                     android:textSize="@dimen/btnFunction_dimen" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:textAllCaps="false"
                     android:onClick="onBtnLeftFourClick"
@@ -186,7 +186,7 @@
                     android:textSize="@dimen/btnFunction_dimen" />
 
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_7"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -194,7 +194,7 @@
                     android:text="@string/btn7_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_8"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -202,7 +202,7 @@
                     android:text="@string/btn8_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_9"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -210,7 +210,7 @@
                     android:text="@string/btn9_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_divide"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -224,7 +224,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:textAllCaps="false"
                     android:onClick="onBtnLeftFourClick"
@@ -235,7 +235,7 @@
                     android:text="@string/sin_name"
                     android:textSize="@dimen/btnFunction_dimen" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:onClick="onBtnLeftFourClick"
                     android:visibility="gone"
                     android:textAllCaps="false"
@@ -247,7 +247,7 @@
                     android:textSize="@dimen/btnFunction_dimen" />
 
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_4"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -255,7 +255,7 @@
                     android:text="@string/btn4_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_5"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -263,7 +263,7 @@
                     android:text="@string/btn5_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_6"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -271,7 +271,7 @@
                     android:text="@string/btn6_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_multiply"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -285,7 +285,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:onClick="onBtnLeftFourClick"
                     android:textAllCaps="false"
@@ -296,7 +296,7 @@
                     android:text="@string/cos_name"
                     android:textSize="@dimen/btnFunction_dimen" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:onClick="onBtnLeftFourClick"
                     android:visibility="gone"
                     android:textAllCaps="false"
@@ -307,7 +307,7 @@
                     android:text="@string/factorial_name"
                     android:textSize="@dimen/btnFunction_dimen" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_1"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -315,7 +315,7 @@
                     android:text="@string/btn1_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_2"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -323,7 +323,7 @@
                     android:text="@string/btn2_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_3"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -331,7 +331,7 @@
                     android:text="@string/btn3_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_minus"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -345,7 +345,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:visibility="gone"
                     android:onClick="onBtnLeftFourClick"
                     android:id="@+id/btn_gen"
@@ -359,14 +359,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:onClick="onBtnLeftFourClick"
                     android:text="@string/xn_name"
                     android:textAllCaps="false"
                     android:textSize="@dimen/btnFunction_dimen"
                     android:visibility="gone" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_percent"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -374,7 +374,7 @@
                     android:text="@string/percent_name"
                     android:textSize="@dimen/btnMass"/>
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_0"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -382,7 +382,7 @@
                     android:text="@string/btn0_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_dot"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -390,7 +390,7 @@
                     android:text="@string/dot_name"
                     android:textSize="@dimen/btnMass" />
                 <Button
-                    android:background="@drawable/button_bg_selector"
+                    android:background="@drawable/button_bg_red"
                     android:id="@+id/btn_plus"
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
@@ -403,7 +403,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_equal_selector_red"
+                android:background="@drawable/button_equal_bg_red"
                 android:text="@string/equal_name"
                 android:textSize="@dimen/btnEqual" />
 

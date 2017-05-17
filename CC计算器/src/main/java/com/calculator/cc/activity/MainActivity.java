@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,7 +43,7 @@ import com.githang.statusbar.StatusBarCompat;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-//TODO 改变Icon快捷方式被删
+
 /**
  * Created by 丛 on 2017/1/17
  */
@@ -223,13 +222,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initFontScale();
         setContentView(R.layout.activity_main);
 
-        packageManager = getApplicationContext().getPackageManager();
-        componentName_red = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivity");
-        componentName_green = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityGreenIcon");
-        componentName_blue = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityBlueIcon");
-        componentName_pink = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityPinkIcon");
-        componentName_violet = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityVioletIcon");
-        componentName_yellow = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityYellowIcon");
         //调用实例化各控件方法
         findIdFunction();
 
@@ -242,32 +234,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //region 设置"="按钮背景颜色选择器颜色
         switch (App.appColor){
             case App.colorRed: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_red);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_red);
                 break;
             }
             case App.colorGreen: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_green);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_green);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_green);
                 break;
             }
             case App.colorBlue: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_blue);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_blue);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_blue);
                 break;
             }
             case App.colorPink: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_pink);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_pink);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_pink);
                 break;
             }
             case App.colorViolet: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_violet);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_violet);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_violet);
                 break;
             }
             case App.colorYellow: {
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_yellow);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_yellow);
                 btn_color_now.setBackgroundResource(R.drawable.set_color_yellow);
                 break;
             }
@@ -315,8 +307,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         drawerLayout.addDrawerListener(drawerToggle);
         //endregion
 
-        //加载计算记录
-        recorderListData = RecorderUtil.getRecorderListData();
         //此处保证textView有文本时,屏幕旋转或分屏文本不消失
         if (!App.textView1_temp.equals("")){
             textView1.setText(App.textView1_temp);
@@ -324,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!App.textView2_temp.equals("")){
             textView2.setText(App.textView2_temp);
         }
-        //此处保证分屏或旋转计算模式保持不变
+        //此处保证进行分屏或旋转后用户选择的计算模式保持不变
         switch (App.calMode){
             //region 标准
             case App.calModeStandard:{
@@ -390,13 +380,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         //第一次运行APP不会执行此方法
         resizeUi();
+
     }
     //endregion
-
 
     @Override
     protected void onStart() {
         super.onStart();
+        //获取组件名
+        packageManager = getApplicationContext().getPackageManager();
+        componentName_red = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivity");
+        componentName_green = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityGreenIcon");
+        componentName_blue = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityBlueIcon");
+        componentName_pink = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityPinkIcon");
+        componentName_violet = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityVioletIcon");
+        componentName_yellow = new ComponentName(getBaseContext(),"com.calculator.cc.activity.MainActivityYellowIcon");
+
+        //加载计算记录
+        recorderListData = RecorderUtil.getRecorderListData();
+
         //放在这里是为了加快启动速度
         //region 设置控件们的监听事件
         textView1.addTextChangedListener(textWatcher);
@@ -457,6 +459,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         drawerListView();
 
+        //设置按钮涟漪颜色
+        setButtonRipple();
     }
 
     @Override
@@ -686,7 +690,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     //endregion
-
+    
     @Override
     //region按钮们的响应事件函数onClick()
     public void onClick(View v) {
@@ -1169,6 +1173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             //endregion
+
             //region revison for 判断最后一个字符,如果是符号或点,就不允许计算 2017.01.20
             String theLastChar = temp.substring(temp.length()-1);
             if(theLastChar.equals("+") || theLastChar.equals("-") || theLastChar.equals("×") || theLastChar.equals("÷") || theLastChar.equals(".")){
@@ -1193,10 +1198,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 temp = temp.replace("÷", "/");
                 inputNumber = "";
 
-                //↓↓↓↓↓↓↓↓↓↓↓↓↓↓核心计算部分↓↓↓↓↓↓↓↓↓↓↓↓↓
+                //↓↓↓↓↓↓↓↓↓↓↓↓↓↓计算部分↓↓↓↓↓↓↓↓↓↓↓↓↓
                 double x1 = CalculatorUtil.calculate(temp);
-                //↑↑↑↑↑↑↑↑↑↑↑↑↑↑核心计算部分↑↑↑↑↑↑↑↑↑↑↑↑↑
+                //↑↑↑↑↑↑↑↑↑↑↑↑↑↑计算部分↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+                //region 处理计算结果并显示在textView2上
                 //保留小数点后10位,将double转换为bg并保留10位小数
                 BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);
                 bg=bg.stripTrailingZeros();
@@ -1207,6 +1213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String strRecorder=showAt1+"=0";
                     recorderListData.add(strRecorder);
                     RecorderUtil.saveRecorderListData(recorderListData);
+
                     return;
                 }
                 //判断小数点后是否为10位,好弹出保留提示
@@ -1217,7 +1224,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(MainActivity.this, "结果已保留10位小数", Toast.LENGTH_SHORT).show();
                 }
                 textView2.setText(showAt2);
+                //endregion
 
+                //region存计算记录
                 //如果textView1为空,上面有个if语句会阻止程序往下进行,所以不用管文本框为空的情况
                 if (recorderListData.size() == 30) {//最大记录为30个,超出30将会把最开始存的那个移除,再添加
                     recorderListData.remove(0);
@@ -1229,6 +1238,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     recorderListData.add(strRecorder);
                     RecorderUtil.saveRecorderListData(recorderListData);
                 }
+                //endregion
 
             } catch (Exception ex) {
                 Toast.makeText(MainActivity.this,"错误",Toast.LENGTH_SHORT).show();
@@ -1613,6 +1623,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else {
                 textChanged(25);
             }
+
         }
     };
     //endregion
@@ -1713,6 +1724,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case App.colorViolet: changeIconViolet(); break;
                     case App.colorYellow: changeIconYellow(); break;
                 }
+
+
                 System.exit(0);//完全结束整个App进程,所有资源均被释放
             }
             return true;
@@ -1782,112 +1795,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //inputNumber = "";//重新置空
             }
         }
-        //endregion
-        //region x²&x³点击响应处理事件 (已弃用)
-//        else if(view.getId()==R.id.btn_x2){
-//            String showAt1 = textView1.getText().toString();
-//            String showAt2 = textView2.getText().toString();
-//
-//            //结尾非数字 按x²就不好使。比如textView1输入 3),前提当然是textView2不能有数字啦！比如textView1:2^(2) textView2:4,此时就不能不好使了
-//            if(showAt2.equals("")) {
-//                if (showAt1.equals("")) {
-//                    return;
-//                }
-//                boolean bool = Character.isDigit(showAt1.charAt(textView1.length() - 1));
-//                //非数字
-//                if (!bool) {
-//                    return;
-//                }
-//            }
-//
-//            if (isEqualPress == 1) {
-//                double x1 = Double.valueOf(textView2.getText().toString());//能处理带E的数字
-//                x1 = Math.pow(x1,2);//求平方
-//                BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
-//                bg=bg.stripTrailingZeros();
-//                if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
-//                    textView2.setText("0");
-//                    isEqualPress = 1;
-//                    return;
-//                }
-//                textView2.setText(bg.toPlainString());
-//                isEqualPress = 1;
-//                return;
-//            }
-//            if (!inputNumber.equals(""))//输入过程中按 x² 情况
-//            {
-//                double x1 = Double.valueOf(inputNumber);
-//                x1 = Math.pow(x1,2);//求平方值
-//                BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
-//                bg=bg.stripTrailingZeros();
-//                try {
-//                    int length = inputNumber.length();
-//                    textView1.setText(showAt1.substring(0, textView1.length() - length));//删掉textBox1中需要开平方的数
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//                if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
-//                    inputNumber = "0";
-//                    textView1.append(inputNumber);
-//                    //inputNumber = "";
-//                    return;
-//                }
-//                inputNumber = bg.toPlainString();
-//                textView1.append(inputNumber);
-//                //inputNumber = "";//重新置空
-//            }
-//        }else if(view.getId()==R.id.btn_x3){
-//            //结尾非数字 按x³就不好使。比如textView1输入 3)
-//            //前提当然是textView2不能有数字啦！比如textView1:2^(2) textView2:4,此时就不能不好使了
-//            if(textView2.getText().toString().equals("")) {
-//                String text1Strs = textView1.getText().toString();
-//                if (text1Strs.equals("")) {
-//                    return;
-//                }
-//                boolean bool = Character.isDigit(text1Strs.charAt(textView1.length() - 1));
-//                //非数字
-//                if (!bool) {
-//                    return;
-//                }
-//            }
-//
-//            if (isEqualPress == 1) {
-//                double x1 = Double.valueOf(textView2.getText().toString());//能处理带E的数字
-//                x1 = Math.pow(x1,3);//求立方
-//                BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
-//                bg=bg.stripTrailingZeros();
-//                if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
-//                    textView2.setText("0");
-//                    isEqualPress = 1;
-//                    return;
-//                }
-//                textView2.setText(bg.toPlainString());
-//                isEqualPress = 1;
-//                return;
-//            }
-//            if (!inputNumber.equals(""))//输入过程中按 x³ 情况
-//            {
-//                double x1 = Double.valueOf(inputNumber);
-//                x1 = Math.pow(x1,3);//求立方
-//                BigDecimal bg = new BigDecimal(x1).setScale(10, BigDecimal.ROUND_HALF_UP);//保留小数点后10位
-//                bg=bg.stripTrailingZeros();
-//                try {
-//                    int length = inputNumber.length();
-//                    textView1.setText(textView1.getText().toString().substring(0, textView1.length() - length));//删掉textBox1中需要开平方的数
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//                if(bg.doubleValue() == 0){//bg.stripTrailingZeros()处理不了0.0000000000的零
-//                    inputNumber = "0";
-//                    textView1.append(inputNumber);
-//                    //inputNumber = "";
-//                    return;
-//                }
-//                inputNumber = bg.toPlainString();
-//                textView1.append(inputNumber);
-//                //inputNumber = "";//重新置空
-//            }
-//        }
         //endregion
         //region x^n
         else if(view.getId()==R.id.btn_xn){
@@ -2567,7 +2474,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_red);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_red);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2586,7 +2494,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_green);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_green);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2605,7 +2514,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_blue);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_blue);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2624,7 +2534,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_pink);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_pink);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2643,7 +2554,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_violet);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_violet);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2662,7 +2574,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置标题栏颜色
                 toolbar.setBackgroundColor(Color.parseColor(App.appColor));
                 //设置等于号按钮颜色
-                btn_equal.setBackgroundResource(R.drawable.button_equal_selector_yellow);
+                btn_equal.setBackgroundResource(R.drawable.button_equal_bg_yellow);
+                setButtonRipple();
                 //将用户颜色信息存起来
                 sharedPreferences.setAppColor(App.appColor);
                 break;
@@ -2759,5 +2672,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         packageManager.setComponentEnabledSetting(componentName,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
+    }
+
+    private void setButtonRipple(){
+        int drawable = 0;
+        switch (App.appColor) {
+            case App.colorRed:
+                drawable = R.drawable.button_bg_red;
+                break;
+            case App.colorGreen:
+                drawable = R.drawable.button_bg_green;
+                break;
+            case App.colorBlue:
+                drawable = R.drawable.button_bg_blue;
+                break;
+            case App.colorPink:
+                drawable = R.drawable.button_bg_pink;
+                break;
+            case App.colorViolet:
+                drawable = R.drawable.button_bg_violet;
+                break;
+            case App.colorYellow:
+                drawable = R.drawable.button_bg_yellow;
+                break;
+        }
+        if (drawable == 0)
+            return;
+        btn_0.setBackgroundResource(drawable);
+        btn_1.setBackgroundResource(drawable);
+        btn_2.setBackgroundResource(drawable);
+        btn_3.setBackgroundResource(drawable);
+        btn_4.setBackgroundResource(drawable);
+        btn_5.setBackgroundResource(drawable);
+        btn_6.setBackgroundResource(drawable);
+        btn_7.setBackgroundResource(drawable);
+        btn_8.setBackgroundResource(drawable);
+        btn_9.setBackgroundResource(drawable);
+        btn_dot.setBackgroundResource(drawable);
+        btn_l.setBackgroundResource(drawable);
+        btn_r.setBackgroundResource(drawable);
+        btn_plus.setBackgroundResource(drawable);
+        btn_minus.setBackgroundResource(drawable);
+        btn_multiply.setBackgroundResource(drawable);
+        btn_divide.setBackgroundResource(drawable);
+        btn_percent.setBackgroundResource(drawable);
+        btn_cls.setBackgroundResource(drawable);
+        btn_del.setBackgroundResource(drawable);
+
+        btn_gen.setBackgroundResource(drawable);
+        btn_xn.setBackgroundResource(drawable);
+
+        btn_pi.setBackgroundResource(drawable);
+        btn_tan.setBackgroundResource(drawable);
+        btn_sin.setBackgroundResource(drawable);
+        btn_cos.setBackgroundResource(drawable);
+
+        btn_e.setBackgroundResource(drawable);
+        btn_lg.setBackgroundResource(drawable);
+        btn_ln.setBackgroundResource(drawable);
+        btn_factorial.setBackgroundResource(drawable);
     }
 }
